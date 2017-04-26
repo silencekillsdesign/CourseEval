@@ -1,23 +1,19 @@
 .vertical-list {
-//	margin-left: 0 !important;
-	.styled-checkbox, .styled-checkbox {
+	margin-left: 0 !important;
+	.styled-checkbox, .styled-checkbox--radio {
 		margin-bottom: .5em;
 	}
 	label {
 		height: auto;
 		margin-left: .5em;
-<<<<<<< HEAD
-		margin-bottom: .5em;
-=======
->>>>>>> parent of f667826... css update
 	}
 }
 .styled-checkbox, .styled-radio {
 	height: 1.5em;
 	width: 1.5em;
 	position: relative;
-//	margin-bottom: .75em;
-//	margin-left: .25em;
+	margin-bottom: .75em;
+	margin-left: .25em;
 	input {
 		height: 1.5em;
 		width: 1.5em;
@@ -30,14 +26,14 @@
 			font-family: FontAwesome;
 			content: "";
 			opacity: 1;
-			position: absolute;
+			position: relative;
 			display: block;
-			height: 1.5em;
-			width: 1.5em;
+			height: 1.55em;
+			width: 1.55em;
 			border: 2px solid $brand-primary;
 			background: white;
 			border-radius: 3px;
-//			font-size: 1rem;
+			font-size: 11em;
 		}
 		&:checked:before {
 				background: $brand-primary;

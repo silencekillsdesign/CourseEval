@@ -1,173 +1,204 @@
-@@ -44,12 +44,6 @@ $likert-colors: (
+//functions
+// Call the color palette modifiers in color values
+//@function theme($color) {
+//  @return map-get($color, $likert-color);
+//}
+
+//$font-path: "../fonts/foundation-icons/foundation-icons";
+//@font-face {
+//	font-family: "foundation-icons";
+//	src: url("#{$font-path}.eot");
+//	src: url("#{$font-path}.eot?#iefix") format("embedded-opentype"),
+//			 url("#{$font-path}.woff") format("woff"),
+//			 url("#{$font-path}.ttf") format("truetype"),
+//			 url("#{$font-path}.svg#fontcustom") format("svg");
+//	font-weight: normal;
+//	font-style: normal;
+//}
+//
+//@import "../etc/fonts/foundation-icons/foundation-icons.css";
+
+
+
+// mixins
+// BEM selectors mixin
+@mixin e($element) {
+	&__#{$element} {
+		@content;
+	}
+}
+@mixin m($modifier) {
+	&--#{$modifier} {
+		@content;
+	}
+}
+
+//variables
+$likert-colors: (
+	green: map-get($foundation-palette, success),
+	darkgreen: darken(map-get($foundation-palette, success), 15),
+	yellow: map-get($foundation-palette, warning),
+	red: map-get($foundation-palette, alert),
+	darkred: darken(map-get($foundation-palette, alert), 15),
+	gray: $medium-gray,
 	purple: #c900f8
 );
-
-//$faces: (
-//	smile: $fa-var-smile-o,
-//	frown: $fa-var-frown-o,
-//	meh: 	 $fa-var-meh-o
-//);
 
 $brand-primary: dodgerblue;
 $brand-secondary: blueviolet;
 $brand-copy: #495058;
-@@ -109,8 +103,6 @@ input, textarea {
-	padding: .5em;
+$brand-copy-light: #f7f7f7;
+
+$topbar-background: $brand-primary;
+
+fieldset {
+	@extend .row;
+	padding: .5em 0 !important;
+	max-width: 100% ;
+	margin: 0 !important;
+}
+label, legend {
+	font-size: .875em;
+	margin: 0;
+}
+.legend {
+	font-size: .875em;
+	line-height: 1.25;
 }
 
-// MOVED TEXT HEADER TO form-header
+legend {
+	margin-bottom: 0;
+//  color: map-get($foundation-palette, success);
+}
+
+input, textarea {
+	margin-bottom: 0 !important;
+}
+
+//.container {
+//  max-width: 960px;
+//}
+
+.top-bar {
+	background-color: $brand-primary;
+	margin-bottom: 0;
+	color: white;
+	.subheader {
+		color: $light-gray;
+		line-height: 1;
+	}
+}
+
+.sd-profile-text {
+	background: lighten($light-gray, 7);
+//  box-shadow: 0 3px 3px rgba(0,0,0,.5);
+}
+
+.form-container {
+	border: 2px solid $brand-primary;
+	margin-top: 2em;
+}
+
+.header-logo {
+	padding: .5em;
+}
 
 .parent-group-desc {
 	text-align: center;
 	margin: 1em 0;
-@@ -122,8 +114,10 @@ input, textarea {
+	padding-top: 1em;
+	font-size: 1.5em;
+	border-top: 1px solid lightgray;
+	color: $brand-primary;
+}
 
 .response {
 //	box-sizing: border-box;
 //	flex: 1;
 	min-width: 4em;
-	max-width: 6em;
 	width: 4em;
 	max-width: 4em;
 	padding: 0 .25em;
 	margin: .125em;
 	font-size: 1rem;
-@@ -131,18 +125,18 @@ input, textarea {
+	line-height: 1;
 	& label {
 		line-height: 1.25;
 	}
-	&:last-of-type {
 //	&:last-of-type {
-		@include breakpoint(medium) {
-			margin-right: .375rem;
-//			align-self: flex-end;
-//			align-content: flex-end;
-//			align-items: flex-end;
-			margin-right: .75rem;
+//		@include breakpoint(medium) {
+//			margin-right: .75rem;
 ////			align-self: flex-end;
 ////			align-content: flex-end;
 ////			align-items: flex-end;
-		}
+//		}
 		// need to check this out for vertical radio label
 //    &.vertical-label {
 //      margin: 0;
 //    }
-	}
 //	}
 }
 
 // moved colored likerts to form-header
-@@ -161,31 +155,6 @@ input, textarea {
+
+.question-row  {
+	padding: .5em 0;
+	&:nth-of-type(even) {
+		background: #f5f5f5;
 	}
 }
-
-
-//.question-row  {
-//  padding: .5em 0;
-// &:nth-of-type(2n+3) {
-//    background: #f5f5f5;
-//   +.text-header {
-//     &:nth-of-type(2n+2) {
-//       background: white;
-//       }
-//     }
-//   }
-//  }
-
-//.row +.text-header:nth-child(odd) {
-//  background: $brand-primary;
-//  + .question-row:nth-of-type(even) {
-//    background: lighten(red, 20);
-//    ~.question-row:nth-of-type(odd) {
-//      background: lighten(blue, 20);
-//    }
-//  }
-//}
-
-
+.question {
+	line-height: 1;
+	margin-bottom: 1em;
+	@include breakpoint(medium) {
+		margin-bottom: 0;
+	}
+}
 
 .required:after {
 		display: inline;
 		position: relative;
-@@ -198,22 +167,17 @@ input, textarea {
+		content: "*";
+		color: coral;
+		font-size: 140%;
+		line-height: 0;
+		top: .125em;
+		margin: 0 0 0 .125em;
 }
 
 .question-number {
-//  padding-right: 0;
 	width: 2.5em !important;
-}
-.question-description {
-	padding-left: 0;
-	margin-left: 0;
 }
 
 .response-label {
 	font-size: 75%;
 	display: block;
-//  line-height: 1.375;
 	line-height: 1.125;
 }
 
 .long-text-input {
-	min-height: 7em;
 	min-height: 8em;
 	margin-bottom: 0;
 }
 
-@@ -221,43 +185,6 @@ option[selected] .select-paceholder {
+option[selected] .select-paceholder {
 	color: #cacaca !important;
 }
 
-//.styled-radio input {
-//	position: relative;
-//	width: 1.5em;
-//	height: 1.5em;
-////  display: none;
-//	top: 0;
-//	right: 0;
-//	bottom: 0;
-//	left: 0;
-//	&:before {
-//		opacity: 1;
-//		content: '';
-//		position: absolute;
-//		font-family: FontAwesome;
-//		top: 0;
-//		right: 0;
-//		bottom: 0;
-//		left: 0;
-//		margin: auto;
-//		border: 2px solid $brand-primary;
-//		background: white;
-//		border-radius: 50%;
-//		@include breakpoint(medium)
-//	}
-//	&:checked:before {
-//			background: $brand-primary;
-//		font-family: font-awesome;
-//			text-indent: .125em;
-//			content: "\f00c";
-//			color: white;
-//			line-height: 1.25;
-//		}
-//}
-
-//moved styled radio input to multicheck
-
-// moved vertical list to multicheck
 
 .sd-submit-button {
 	margin-top: 1em !important;
-@@ -268,11 +195,7 @@ option[selected] .select-paceholder {
-	margin-bottom: 2em;
 }
 
-//for debugging only
-.question-group-section {
-	border: 1px solid coral;
+.view-mode-label {
+	color: lighten(#000, 50);
+	margin-bottom: 2em;
 }
 
 //move to footer scss
 .footer {
 	margin-top: 2em;
 	text-align: center;
+	background: lightgray;
+	padding: 1em;
+}
