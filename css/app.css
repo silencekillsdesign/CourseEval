@@ -11,9 +11,11 @@ fieldset {
   margin: 0 !important; }
 
 label, legend {
+  font-size: .875em;
   margin: 0; }
 
 .legend {
+  font-size: .875em;
   line-height: 1.25; }
 
 legend {
@@ -44,13 +46,11 @@ input, textarea {
   text-align: center;
   margin: 1em 0;
   padding-top: 1em;
+  font-size: 1.5em;
   border-top: 1px solid lightgray;
   color: dodgerblue; }
 
 .response {
-  min-width: 4em;
-  width: 4em;
-  max-width: 4em;
   padding: 0 .25em;
   margin: .125em;
   font-size: 1rem;
@@ -70,6 +70,13 @@ input, textarea {
     .question {
       margin-bottom: 0; } }
 
+.question-number {
+  width: 2.5em !important; }
+
+.question-description {
+  padding-right: 0;
+  display: inline-block; }
+
 .required:after {
   display: inline;
   position: relative;
@@ -80,10 +87,8 @@ input, textarea {
   top: .125em;
   margin: 0 0 0 .125em; }
 
-.question-number {
-  width: 2.5em !important; }
-
 .response-label {
+  font-size: 75%;
   display: block;
   line-height: 1.125; }
 
@@ -112,9 +117,6 @@ option[selected] .select-paceholder {
   color: white;
   line-height: 1;
   padding: .5em 0; }
-  .text-header .response {
-    max-width: 7em;
-    padding: .25em; }
 
 .responses-block {
   border: 1px solid red;

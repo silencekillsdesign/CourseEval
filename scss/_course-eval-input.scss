@@ -58,11 +58,11 @@ fieldset {
 	margin: 0 !important;
 }
 label, legend {
-//	font-size: .875em;
+	font-size: .875em;
 	margin: 0;
 }
 .legend {
-//	font-size: .875em;
+	font-size: .875em;
 	line-height: 1.25;
 }
 
@@ -107,7 +107,7 @@ input, textarea {
 	text-align: center;
 	margin: 1em 0;
 	padding-top: 1em;
-//	font-size: 1.5em;
+	font-size: 1.5em;
 	border-top: 1px solid lightgray;
 	color: $brand-primary;
 }
@@ -115,9 +115,9 @@ input, textarea {
 .response {
 //	box-sizing: border-box;
 //	flex: 1;
-	min-width: 4em;
-	width: 4em;
-	max-width: 4em;
+//	min-width: 4em;
+//	width: 4em;
+//	max-width: 4em;
 	padding: 0 .25em;
 	margin: .125em;
 	font-size: 1rem;
@@ -155,6 +155,16 @@ input, textarea {
 	}
 }
 
+.question-number {
+	width: 2.5em !important;
+}
+
+.question-description {
+	//fix for ie10 bleow
+	padding-right: 0;
+	display: inline-block;
+}
+
 .required:after {
 		display: inline;
 		position: relative;
@@ -166,12 +176,10 @@ input, textarea {
 		margin: 0 0 0 .125em;
 }
 
-.question-number {
-	width: 2.5em !important;
-}
+
 
 .response-label {
-//	font-size: 75%;
+	font-size: 75%;
 	display: block;
 	line-height: 1.125;
 }
