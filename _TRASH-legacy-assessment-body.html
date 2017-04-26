@@ -1,0 +1,313 @@
+<!--- Define primary key --->
+#pkeyID=DECODE[#v$template_flag.0#]
+	[1][NEW$#transaction_id[]#]
+	[0][#v$profile_item_id#]#
+
+<!--- set admin flag to 0 to trigger view mode for PROFILE_VIEW report page even for admin --->
+#v$admin_flag=DECODE[#PAGE_CODE#][PROFILE_VIEW][0][#v$admin_flag#]#
+
+<!--- item number --->
+<!--- EXTRA item_num add, see Issue Number: 57361 --->
+<!--- #item_num=+[1]# --->
+
+<!--- count --->
+#IF[#radio_button_flag.0#]
+[
+#num=+[1]#
+]#
+
+#IF[#v$master_desc.EXISTS#][
+	<tr #TH_STYLE#>
+		<td class="list_heading" width=100% height=5 colspan=20>#v$master_desc.BR#</td>
+	</tr>
+]#
+
+#dd_id=[]##dd_desc=[]##SQL_LOV=[]#
+#EQUAL[#dropdown_flag##lookup_table_flag#][01][
+#Has_id=INSTR[#list_of_values.lower#][ dd_id]#
+#Has_desc=INSTR[#list_of_values.lower#][ dd_desc]#
+<!--- Add DD_DESC to SQL clause if its not present --->
+#list_of_values=IF[#AND[#has_id.SIGN.NOT#][#has_desc.SIGN.NOT#]#][#iREPLACE[#list_of_values#][from ][ dd_desc from ]#][#list_of_values#]#
+#SQL_LOV=SECTION[GET_LOV_SQL_LIST][#list_of_values#]#
+#SQL_LOV=RTRIM[#SQL_LOV#][
+]#
+]#
+
+<!--- Reset radio button heading and values if it's the first in a group or the list of values is present --->
+#IF[#AND[#radio_button_flag#][#OR[#v$parent_desc.EXISTS#][#list_of_values.EXISTS#][#number_flag#]#]#]
+	[
+#LIKE[#v$group_code#][PROF-%]
+[
+<!--- PROF- Records - reuse backed up headers and inputs --->
+#IF[#number_flag#][
+#IF[#AND[#Radio_Button_Group_Headers_BAK.EXISTS.NOT#][#P15.ISNUMBER#]#][
+#SECTION[GET_RADIO_BUTTON_HEADINGS][#P15#][#P16#]#
+][
+#Radio_Button_Group_Headers=[#Radio_Button_Group_Headers_BAK.UNRAW#]#
+#Radio_Button_Inputs=[#Radio_Button_Inputs_BAK.UNRAW#]#
+#Radio_Button_View=[#Radio_Button_View_BAK.UNRAW#]#
+]#
+][<!--- not a number - get verticle radio button list --->
+#SECTION[GET_RADIO_BUTTON_HEADINGS][#v$profile_group_id#][#item_sort_order#]#
+]#
+][
+<!--- NOT a PROF- Group - don't get radio headings since they do not author in those groups--->
+#SECTION[GET_RADIO_BUTTON_HEADINGS][#v$profile_group_id#][#item_sort_order#]#
+#IF[#number_flag#][
+#Radio_Button_Group_Headers_BAK=PARSE[#Radio_Button_Group_Headers.RAW#]#
+#Radio_Button_Inputs_BAK=PARSE[#Radio_Button_Inputs.RAW#]#
+#Radio_Button_View_BAK=PARSE[#Radio_Button_View.RAW#]#
+<!--- Assign P15/P16 for next/prev links --->
+#IF[#AND[#Radio_Button_Group_Headers_BAK.EXISTS#][#NOTEQUAL[#v$profile_group_id.0#][#P15.1#]#]#]
+[<script language="JavaScript">
+document.forms[0].P15.value="#v$profile_group_id#";
+document.forms[0].P16.value="#item_sort_order#";
+</script>
+#P15=PARSE[#v$profile_group_id#]#
+]#
+
+]#
+]#
+
+]#
+
+#IF[#v$parent_desc.EXISTS#][
+<!--- group --->
+<tr class="yellow">
+		<td class="list_heading" align="center" width=372 noWrap colspan=2>#v$parent_desc.BR#</td>
+
+<!---    <td class="list_heading" width=66 nowrap align="center">Average<br><font size=2 color=blue>#v$group_average.round1#</font></td>--->
+
+<!--- added nvl to accomodate radio buttons vertical layout, in which case Radio_Button_Group_Headers will be NULL.
+Note: colspan=7 as default, random #, no particular reason.  May be modified if needed --->
+
+#IF[#radio_button_flag#]
+	 [#NVL[#Radio_Button_Group_Headers#][<td colspan=#radio_colspan#>&nbsp;</td>]#]
+	 [<td colspan=#radio_colspan# class="list_data">#IF[#v$help_text.EXISTS#][#v$help_text#][&nbsp;]#</td>]#
+#Radio_Button_Group_Headers_LAST=PARSE[#Radio_Button_Group_Headers#]#
+	</tr>
+]#
+
+<!--- RADIO BUTTON HEADERS CHANGE --->
+#IF[#Radio_Button_Group_Headers.EXISTS#][
+	#NOTEQUAL[#Radio_Button_Group_Headers#][#Radio_Button_Group_Headers_LAST#][
+		#IF[#radio_button_flag#]
+		[
+<tr class="yellow">
+		<td class="list_heading" align="center" colspan=2>&nbsp;</td>
+		#Radio_Button_Group_Headers#
+</tr>
+			#Radio_Button_Group_Headers_LAST=PARSE[#Radio_Button_Group_Headers#]#
+		]#
+	]#
+]#
+
+<!--- ITEM CORE ELEMENTS --->
+<!--- Reset displayed item --->
+#NOTEQUAL[#last_item_id.0#][#v$item_id#][#display_item=[]#]#
+<!--- Item Text Display --->
+#IF[#multi_checkbox_flag.NOT#][
+<!--- NOT MULTI CHECKBOX --->
+<tr onMouseOver="this.bgColor = '#F1F1F1'"
+		onMouseOut ="this.bgColor = '#FFFFFF'"
+		bgcolor="#FFFFFF">
+<td class="list_data" colspan="2" width=372>
+<input type="hidden" name="profile_item_id" value="#pkeyID#">
+<input type="hidden" name="item_id" value="#v$item_id#">
+<input type="hidden" name="sort_order" value="#v$sort_order#">
+#show_item_text=OR[#checkbox_flag.NOT#][#list_of_values.NOTEXISTS#]#
+#IF[#show_item_text#][#item_num=+[1]#<strong>#item_num#.</strong>&nbsp;#v$item_desc.BR#][&nbsp;]#
+</td>
+][<!--- MULTI CHECKBOX --->
+#IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+<!--- EDIT mode for multi-checkbox --->
+<tr bgcolor="#FFFFFF">
+<td class="list_data" colspan=#radio_colspan#>
+#item_num=+[1]#<strong>#item_num#.</strong>&nbsp;#v$item_desc.BR#
+</td>
+</tr>
+
+<tr onMouseOver="this.bgColor = '#F1F1F1'"
+		onMouseOut ="this.bgColor = '#FFFFFF'"
+		bgcolor="#FFFFFF">
+<td class="list_data" colspan=#radio_colspan# nowrap>
+<table border=0>
+<tr><td width=50>&nbsp;</td>
+][
+<!--- VIEW mode for multi-checkbox --->
+	#IF[#v$short_text.EXISTS#][
+<tr bgcolor="#FFFFFF">
+<td class="list_data" colspan="2" width=372>
+		#NOTEXISTS[#display_item#]
+			[#item_num=+[1]#<strong>#item_num#.</strong>&nbsp;#v$item_desc.BR#
+#display_item=PARSE[#v$item_id#]#][&nbsp;]#
+</td>
+	]#
+]#
+]#
+#last_item_id=PARSE[#v$item_id#]#
+
+#DECODE[1]
+<!--- -------------- RADIO BUTTON LOGIC -------------- --->
+[#radio_button_flag#][
+#IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+#IF[#v$score_flag.0#][<input type="hidden" name="score_flag" value="#pkeyID#">]#
+
+<!--- use either the score or short_text field for storing radio buttons --->
+#DECODE[1]
+ [#number_flag#][#v$score=NVL[#v$score#][#v$radio_default_number#]#<input type=hidden name="short_text" value="#v$short_text.RAW#">
+<input id="Radio_#num##req_class#" type="hidden" name="score#num#" value="">#Radio_Button_Inputs#
+]
+ [<input type=hidden name="score" value="#v$score#">
+<input id="Radio_#num##req_class#" type="hidden" name="short_text#num#" value="">#Radio_Button_Inputs#
+#v$score=PARSE[#v$short_text#]#
+]#
+
+][#Radio_Button_View#]#
+]<!--- END RADIO BUTTON LOGIC --->
+
+<!--- -------------- DISPLAY TEXT LOGIC -------------- --->
+[#display_text_flag#][
+#IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+#v$short_text=NVL[#v$short_text#][#SQL_LOV#][#list_of_values#]#
+<td colspan=#radio_colspan# class=input_text><input type="hidden" name="score" value="#v$score#">
+#IF[#v$score_flag.0#][<input type="hidden" name="score_flag" value="#pkeyID#">]#
+<input type="hidden" name="short_text" value="#v$short_text.RAW#">#v$short_text.RAW.BR#</td>]
+<!--- VIEW ONLY TEXT --->
+[<td colspan=#radio_colspan# class=text_data align=left>#v$short_text.RAW.BR#</td>]#
+]<!--- END DISPLAY TEXT FLAG LOGIC --->
+
+<!--- -------------- INPUT TEXT LOGIC -------------- --->
+[#input_text_flag#][
+#IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+#v$short_text=NVL[#v$short_text#][#SQL_LOV#][#list_of_values#]#
+<td colspan=#radio_colspan#><input type="hidden" name="score" value="#v$score#">
+#IF[#v$score_flag.0#][<input type="hidden" name="score_flag" value="#pkeyID#">]#
+<input type=text class=input_text#req_class# name="short_text" value="#v$short_text.RAW#" size="#text_columns#"  #EXISTS[#v$text_max_length#][maxlength="#v$text_max_length#"]#></td>]
+<!--- VIEW ONLY TEXT --->
+[<td colspan=#radio_colspan# class=text_data align=left>#v$short_text.RAW.BR#</td>]#
+]<!--- END TEXT ENTRY LOGIC --->
+
+<!--- -------------- TEXT ENTRY LOGIC -------------- --->
+[#text_allowed_flag#][
+#IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+#v$short_text=NVL[#v$short_text#][#SQL_LOV#][#list_of_values#]#
+<td colspan=#radio_colspan#><input type="hidden" name="score" value="#v$score#">
+#IF[#v$score_flag.0#][<input type="hidden" name="score_flag" value="#pkeyID#">]#
+#IF[#OR[#v$text_max_length.EXISTS#][#v$text_min_length.EXISTS#]#][<textarea id="id#item_num#" rows=#NVL[#text_rows#][4]# cols=#NVL[#text_columns#][74]# class=input_text#req_class# name="short_text"
+onKeyDown="limitText(this, #v$text_max_length.0#, 'countdown_#item_num#');"
+onKeyUp="limitText(this, #v$text_max_length.0#, 'countdown_#item_num#');" onBlur="return minText(this, #v$text_min_length.0#, #item_num#);">#v$short_text.RAW#</textarea>
+<div id="countdown_#item_num#"></div>
+][<textarea rows=#NVL[#text_rows#][4]# cols=#NVL[#text_columns#][74]# class=input_text#req_class# name="short_text">#v$short_text.RAW#</textarea>]#
+</td>]
+<!--- VIEW ONLY TEXT --->
+[<td colspan=#radio_colspan# class=text_data align=left>#v$short_text.RAW.BR#</td>]#
+]<!--- END TEXT ENTRY LOGIC --->
+
+<!--- -------------- DROP DOWN LOGIC -------------- --->
+[#dropdown_flag#][
+#IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+<td colspan=#radio_colspan#><input type="hidden" name="score" value="#v$score#">
+#IF[#v$score_flag.0#][<input type="hidden" name="score_flag" value="#pkeyID#">]#
+<select name="short_text" class="input_text#req_class#">
+#EXISTS[#v$existing_profile_id#][<option value=""></option>]#
+<!---
+#IF[#lookup_table_flag.0#][#dd_list_of_values=SECTION[DD_LOV][#list_of_values#]#]#
+#SELECTED[#dd_list_of_values#][#v$short_text.RAW#][#v$short_text.RAW#]#
+--->
+<!--- Section checks lookup_table_flag = 1 - CALL BELOW FOR SECTIONS > 32K --->
+<!---#SECTION[DD_LOV][#list_of_values#][#v$short_text.RAW#]#--->
+#IF[#lookup_table_flag.0.NOT#]
+	 [#SELECTED[#dd_list_of_values#][#v$short_text.RAW#][#v$short_text.RAW#]#
+</select></td>]#
+]
+<!--- VIEW ONLY TEXT --->
+[<td colspan=#radio_colspan# class=text_data align=left>#v$short_text.RAW.BR#</td>]#
+]<!--- END DROP DOWN LOGIC --->
+
+<!--- -------------- MULTI CHECKBOX LOGIC -------------- --->
+[#multi_checkbox_flag#][
+#IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+#list_of_values=NVL[#SQL_LOV#][#list_of_values#]#
+<td valign=top width=150>
+
+#cb_tab_att=[border=0 cellspacing=1 cellpadding=1 width=100%]#
+
+<!--- Break up the list into multiple columns --->
+#fields_per_col=DIV[#list_of_values.ROWS#][#text_columns.ABS.1#]#
+#fields_per_col=PARSE[#fields_per_col.CEIL#]#
+
+#cb_format=[]#
+#cb_field=[
+#pkeyID=DECODE[#v$template_flag.0#][1][NEW$#transaction_id[]#][0][#v$profile_item_id#]#
+<tr><td class=input_text nowrap>
+<input type=hidden name=profile_item_id value="#pkeyID#">
+<input type=hidden name=item_id value="#v$item_id#">
+<input type=hidden name=sort_order value="#v$sort_order#">
+<input type=hidden name=score value="">
+<input type=hidden name=short_text id=st_#pkeyID# value="">
+<input type=checkbox name=score_flag id=cb_#pkeyID# #v$score_flag.CHECKED# value="#cb_name.RAW#" onClick="setMulti('#pkeyID#',0);"><span onClick="setMulti('#pkeyID#',1);"> #cb_name#<span></td></tr>
+]#
+<!--- Add CR to end for searching --->
+#list_of_values=PARSE[#list_of_values#
+]#
+#found=INSTR[#list_of_values#][
+]#
+
+<table #cb_tab_att#>
+
+#loop=[0]#
+#WHILE[#found.SIGN#]
+[#cb_name=SUBSTR[#list_of_values#][1][#SUB[#found#][1]#]#
+#list_of_values=SUBSTR[#list_of_values#][#ADD[#found#][1]#]#
+
+#EQUAL[#loop#][#fields_per_col#]
+[</table></td><td valign=top width=150><table #cb_tab_att#>
+#loop=[0]#]#
+
+#cb_field#
+#loop=+[1]#
+#found=INSTR[#list_of_values#][
+]#
+][1000]#<!---End WHILE--->
+
+</table>
+
+</td></tr></table>
+</td>
+
+]
+<!--- VIEW ONLY TEXT - only show value if it was checked (text exists) --->
+[#EXISTS[#v$short_text#][<td colspan=#radio_colspan# class=input_text align=left>#v$score_flag.CHECKBOX# #v$short_text#</td>]#
+]#
+]<!--- END MULTI CHECKBOX LOGIC --->
+
+<!--- -------------- CHECKBOX LOGIC -------------- --->
+[#checkbox_flag#][
+#IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+<td colspan=#radio_colspan#><input type="hidden" name="score" value="#v$score#">
+<input type="hidden" name="short_text" value="#v$short_text.RAW#">
+<input type="checkbox" name="score_flag" #v$score_flag.CHECKED# value="#pkeyID#"> <span class="input_text">#list_of_values.RAW#</span>
+</td>]
+<!--- VIEW ONLY TEXT --->
+[<td colspan=#radio_colspan# class=text_data align=left>#v$score_flag.CHECKBOX# #list_of_values.RAW#</td>]#
+]#<!--- END CHECKBOX LOGIC --->
+
+<!--- MULTI SELECTION LOGIC
+[#multi_selection_flag#][
+#IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+<td colspan=#radio_colspan#><input type="hidden" name="score" value="#v$score#">
+#IF[#v$score_flag.0#][<input type="hidden" name="score_flag" value="#pkeyID#">]#
+<select name="short_text" class="input_text#req_class#" multiple="multiple" size=#multi_selection_rows#>
+#EXISTS[#v$existing_profile_id#][<option value=""></option>]#
+#IF[#lookup_table_flag.0#][#dd_list_of_values=SECTION[DD_LOV][#list_of_values#]#]#
+#SELECTED[#dd_list_of_values#][#v$short_text.RAW#][#v$short_text.RAW#]#
+</select></td>]
+<!--- VIEW ONLY TEXT --->
+[<td colspan=#radio_colspan# class=text_data align=left>#v$short_text.RAW.BR#</td>]#
+]<!--- END MULTI SELECTION LOGIC --->
+ --->
+<!---CALLED IN MASTER DETAIL SECTION TO ENABLE > 32K return
+		 #SECTION[DD_LOV][#list_of_values#][#v$short_text.RAW#]#
+</TR>
+--->

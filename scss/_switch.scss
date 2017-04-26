@@ -1,0 +1,29 @@
+$switch-background				:	$medium-gray;	//	Background color of a switch.
+$switch-background-active	:	$brand-primary;	//	Background active color of a switch.
+$switch-height						:	2rem;	//	Height of a switch, with no class applied.
+$switch-height-tiny				:	1.5rem;	//	Height of a switch with .tiny class.
+$switch-height-small			:	1.75rem;	//	Height of a switch with .small class.
+$switch-height-large			:	2.5rem;	//	Height of a switch with .large class.
+$switch-radius						:	$global-radius;	//	Border radius of the switch
+$switch-margin						:	0 0 0 0;	//	border around a modal.
+$switch-paddle-background	:	$white;	//	Background color for the switch container and paddle.
+$switch-paddle-offset			:	0.25rem;	//	Spacing between a switch paddle and the edge of the body.
+$switch-paddle-radius			: 2px;	//	border radius of the switch paddle
+$switch-paddle-transition	:	all 0.25s ease-out;	//	switch transition.
+
+
+.check-on-view, .check-off-view  {
+//  color: $brand-primary;
+	font-size: 140%;
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+	+.response-label {
+		margin-left: 0;
+	}
+}
+
+.check-on-view {
+	color: $brand-primary;
+}
+.check-off-view {
+	color: darken($brand-copy-light, 10);
+}

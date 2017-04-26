@@ -1,0 +1,93 @@
+ul {
+	margin-left: 0;
+	@include breakpoint(medium) {
+		margin-left: 0.75em;
+	}
+}
+
+.vertical-list-container {
+	padding-left: 0 !important;
+	@include breakpoint(medium) {
+		padding-left: .75em !important;
+	}
+}
+
+.vertical-list {
+	margin: 0 !important;
+	padding-left: 0 !important;
+//	text-indent: 0;
+	.response {
+		line-height: 0;
+	}
+	li {
+		margin-bottom: .5em;
+	}
+	@include breakpoint(medium) {
+//		padding-left: .125em;
+//		.styled-radio {
+//			margin-left: -.125em;
+//		}
+	}
+}
+
+//combine styled-checkbox and styled-radio to styled-check and add border radius to type radio
+//.styled-checkbox input {
+//	position: relative;
+//	height: 1.75em;
+//	width: 1.75em;
+//	&:before {
+//		@include vertical-center;
+//		font-family: FontAwesome;
+//		content: "";
+//		opacity: 1;
+//		position: absolute;
+//		display: block;
+//		height: 1.75em;
+//		width: 1.75em;
+//		border: 2px solid $brand-primary;
+////		background: white;
+//		border-radius: .25em;
+//	}
+//	&:checked:before {
+//		background: $brand-primary;
+//		text-indent: .125em;
+//		content: "\f00c";
+//		color: white;
+//		line-height: 1.25;
+//	}
+//}
+
+.styled-checkbox {
+	height: 1.75em;
+	width: 1.75em;
+}
+
+.styled-radio input {
+		position: relative;
+		height: 1.5em;
+		width: 1.5em;
+		&:before {
+//			@include vertical-center;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			font-family: FontAwesome;
+			content: "";
+			opacity: 1;
+			position: absolute;
+			display: block;
+			height: 1.5em;
+			width: 1.5em;
+			border: 2px solid $brand-primary;
+			background: white;
+			border-radius: 50%;
+		}
+		&:checked:before {
+			background: $brand-primary;
+			text-indent: .125em;
+			content: "\f00c";
+			color: white;
+			line-height: 1.25;
+		}
+	}

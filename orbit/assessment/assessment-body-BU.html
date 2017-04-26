@@ -1,0 +1,296 @@
+<!--- #f_Professor_Added_Questions_Section=[#DECODE[#QUERY_CODE#][ASSESSMENT_PROFESSOR][1][0]#]# --->
+#f_Professor_Added_Questions_Section=[#DECODELIKE[#v$group_code#][PROF-%][1][0]#]#
+#f_Professor_Added_Questions_SRLActive=[#IF[#AND[#f_STUDENT_PROFESSOR_SMALL_RESPONSIVE_LAYOUT#][#f_Professor_Added_Questions_Section#]#][1][0]#]#
+#f_Professor_Added_Questions_Class_H=[#IF[#AND[#f_STUDENT_PROFESSOR_SMALL_RESPONSIVE_LAYOUT#][#f_Professor_Added_Questions_Section#]#][show-for-small-only][]#]#
+#f_Professor_Added_Questions_Class_B=[#IF[#AND[#f_STUDENT_PROFESSOR_SMALL_RESPONSIVE_LAYOUT#][#f_Professor_Added_Questions_Section#]#][][show-for-small-only]#]#
+#f_Professor_Added_Questions_Class_M=[#IF[#AND[#f_STUDENT_PROFESSOR_SMALL_RESPONSIVE_LAYOUT#][#f_Professor_Added_Questions_Section#]#][hide-for-small-only][]#]#
+
+<!--- Define primary key --->
+#pkeyID=DECODE[#v$template_flag.0#] [1][NEW$#transaction_id[]#] [0][#v$profile_item_id#]#
+
+<!--- set admin flag to 0 to trigger view mode for PROFILE_VIEW report page even for admin --->
+#v$admin_flag=DECODE[#PAGE_CODE#][PROFILE_VIEW][0][#v$admin_flag#]#
+
+<!--- count --->
+#IF[#radio_button_flag.0#] [ #num=+[1]# ]# #IF[#v$master_desc.EXISTS#][
+
+<div class="row">
+	<div class="large-12 columns parent-group-desc">
+		#v$master_desc.BR#
+	</div>
+</div>]#
+
+#dd_id=[]##dd_desc=[]##SQL_LOV=[]# #EQUAL[#dropdown_flag##lookup_table_flag#][01][ #Has_id=INSTR[#list_of_values.lower#][ dd_id]# #Has_desc=INSTR[#list_of_values.lower#][ dd_desc]#
+
+<!--- Add DD_DESC to SQL clause if its not present --->
+#list_of_values=IF[#AND[#has_id.SIGN.NOT#][#has_desc.SIGN.NOT#]#][#iREPLACE[#list_of_values#][from ][ dd_desc from ]#][#list_of_values#]# #SQL_LOV=SECTION[GET_LOV_SQL_LIST][#list_of_values#]# #SQL_LOV=RTRIM[#SQL_LOV#][ ]# ]#
+
+<!--- Reset radio button heading and values if it's the first in a group or the list of values is present --->
+#IF[#AND[#radio_button_flag#][#OR[#v$parent_desc.EXISTS#][#list_of_values.EXISTS#][#number_flag#]#]#] [ #LIKE[#v$group_code#][PROF-%] [
+
+<!--- PROF- Records - reuse backed up headers and inputs --->
+#IF[#number_flag#][ #IF[#AND[#Radio_Button_Group_Headers_BAK.EXISTS.NOT#][#P15.ISNUMBER#]#]
+									[ #SECTION[GET_RADIO_BUTTON_HEADINGS][#P15#][#P16#]#]
+									[ #IF[#f_Professor_Added_Questions_SRLActive.0#]
+
+[#Radio_Button_Group_Headers=[#SECTION[GET_RADIO_BUTTON_HEADINGS][#v$profile_group_id#][#item_sort_order#]#]#]
+
+
+[
+#Radio_Button_Group_Headers=[#Radio_Button_Group_Headers_BAK.UNRAW#]# #Radio_Button_Inputs=[#Radio_Button_Inputs_BAK.UNRAW#]# #Radio_Button_View=[#Radio_Button_View_BAK.UNRAW#]#
+]#
+
+]# ][
+#SECTION[GET_RADIO_BUTTON_HEADINGS][#v$profile_group_id#][#item_sort_order#]# ]# ][
+#SECTION[GET_RADIO_BUTTON_HEADINGS][#v$profile_group_id#][#item_sort_order#]#
+#IF[#number_flag#][ #Radio_Button_Group_Headers_BAK=PARSE[#Radio_Button_Group_Headers.RAW#]# #Radio_Button_Inputs_BAK=PARSE[#Radio_Button_Inputs.RAW#]# #Radio_Button_View_BAK=PARSE[#Radio_Button_View.RAW#]#
+
+<!--- Assign P15/P16 for next/prev links --->
+#IF[#AND[#Radio_Button_Group_Headers_BAK.EXISTS#][#NOTEQUAL[#v$profile_group_id.0#][#P15.1#]#]#] [
+<script language="JavaScript">
+	document.forms[0].P15.value = "#v$profile_group_id#";
+	document.forms[0].P16.value = "#item_sort_order#";
+</script>
+#P15=PARSE[#v$profile_group_id#]# ]# ]# ]# ]#
+#IF[#v$parent_desc.EXISTS#][
+<!--- header group --->
+<div class="row text-header">
+	<div class='columns expand'>
+		<h5>#v$parent_desc.BR#</h5>
+	</div>
+	<!--- added nvl to accommodate radio buttons vertical layout, in which case Radio_Button_Group_Headers will be NULL. --->
+	#IF[#AND[#number_flag.0#][#radio_button_flag.0#]#][
+	<div class='hide-for-small-only medium-7 columns align-top #f_Professor_Added_Questions_Class_H#'>
+		<div class="row align-justify small-uncollapse medium-collapse">
+			#IF[#radio_button_flag#] [#NVL[#Radio_Button_Group_Headers#][ ]#] [ #IF[#v$help_text.EXISTS#][#v$help_text#]# ]# #Radio_Button_Group_Headers_LAST=PARSE[#Radio_Button_Group_Headers#]#
+		</div>
+	</div>
+	]#
+</div>
+]#
+
+
+<!--- RADIO BUTTON HEADERS CHANGE --->
+#IF[#Radio_Button_Group_Headers.EXISTS#][ #NOTEQUAL[#Radio_Button_Group_Headers#][#Radio_Button_Group_Headers_LAST#][ #IF[#radio_button_flag#] [
+
+<!--- JMJ Note: This has been commented out due to professor added questions. Review to see if this being missing is an issue. Initial testing does not show a problem.
+<div class='medium-7 columns #f_Professor_Added_Questions_Class_H#'>
+	<div class="row align-justify collapse #f_Professor_Added_Questions_Class_M#">
+		#Radio_Button_Group_Headers#
+	</div>
+--->
+
+#Radio_Button_Group_Headers_LAST=PARSE[#Radio_Button_Group_Headers#]# ]# ]# ]#
+
+<!--- begin question row --->
+<div class='row question-row'>
+	<!--- ITEM CORE ELEMENTS --->
+	<!--- Reset displayed item --->
+	#NOTEQUAL[#last_item_id.0#][#v$item_id#][#display_item=[]#]#
+
+	<!--- Item Text Display --->
+	#IF[#multi_checkbox_flag.NOT#][
+	<!--- NOT MULTI CHECKBOX --->
+	<div class='small-12 medium-5 columns question align-stretch'>
+		<input type="hidden" name="profile_item_id" value="#pkeyID#">
+		<input type="hidden" name="item_id" value="#v$item_id#">
+		<input type="hidden" name="sort_order" value="#v$sort_order#"> #show_item_text=OR[#checkbox_flag.NOT#][#list_of_values.NOTEXISTS#]# #IF[#show_item_text#][#item_num=+[1]# #DECODE[1][#radio_button_flag#][
+		<div class="row align-top legend">
+			<span class="question-number shrink columns">#item_num#.</span>
+			<span class="question-description columns #EXISTS[#req_class#][required]#" id="q-#num#">#v$item_desc.BR#</span>
+		</div>
+		] [
+		<label for="id-#item_num#" class="row align-top">
+			<span class="question-number shrink columns">#item_num#.</span>
+			<span class="question-description columns #EXISTS[#req_class#][required]#" id="q-#num#">#v$item_desc.BR#</span>
+		</label>
+		]#
+	</div>
+	]# ] [
+	<!--- MULTI CHECKBOX --->
+	#IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+	<!--- EDIT mode for multi-checkbox --->
+	<div class='small-12 medium-5 columns question align-stretch'>
+		#item_num=+[1]#
+		<div class="row legend">
+			<span class="question-number shrink columns">#item_num#.</span>
+			<span class="question-description columns #EXISTS[#req_class#][required]#" id="q-#num#">#v$item_desc.BR#</span>
+		</div>
+	</div>
+	][
+	<!--- VIEW mode for multi-checkbox --->
+	#IF[#v$short_text.EXISTS#][
+	<div class='small-12 medium-5 columns question align-stretch'>
+		#NOTEXISTS[#display_item#] [#item_num=+[1]#
+		<div class="row align-top legend">
+			<span class="question-number shrink columns">#item_num#.</span>
+			<span class="question-description columns #EXISTS[#req_class#][required]#" id="q-#num#">#v$item_desc.BR# #display_item=PARSE[#v$item_id#]#</span>
+		</div>
+			]#
+	</div>
+	]# ]# ]# #last_item_id=PARSE[#v$item_id#]# #DECODE[1]
+
+	<!--- -------------- RADIO BUTTON LOGIC -------------- --->
+	[#radio_button_flag#][ #IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][ #IF[#v$score_flag.0#][
+	<input type="hidden" name="score_flag" value="#pkeyID#">]#
+	<!--- use either the score or short_text field for storing radio buttons --->
+	#DECODE[1] [#number_flag#][#v$score=NVL[#v$score#][#v$radio_default_number#]#
+	<input type="hidden" name="short_text" value="#v$short_text.RAW#">
+	<input id="Radio_#num##req_class#" type="hidden" name="score#num#" value="">
+	<!-- JMJ Start 1-->
+	<div class='medium-7 columns expand'>
+		<div class="row align-justify small-uncollapse medium-collapse">
+			#Radio_Button_Inputs#
+		</div>
+	</div>] [
+	<input type="hidden" name="score" value="#v$score#">
+	<input id="Radio_#num##req_class#" type="hidden" name="short_text#num#" value="">#Radio_Button_Inputs# #v$score=PARSE[#v$short_text#]# ]# ][
+
+	<!--- VIEW ONLY TEXT --->
+	<div class='medium-7 columns expand'>
+		<!--    <div class ="row align-justify collapse"> -->
+		<div class="row align-justify small-uncollapse medium-collapse">
+			#Radio_Button_View#
+		</div>
+	</div>]# ]
+	<!--- END RADIO BUTTON LOGIC --->
+
+	<!--- -------------- DISPLAY TEXT LOGIC -------------- --->
+	[#display_text_flag#][ #IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][ #v$short_text=NVL[#v$short_text#][#SQL_LOV#][#list_of_values#]#
+	<div class='medium-7 columns expand'>
+		<input type="hidden" name="score" value="#v$score#"> #IF[#v$score_flag.0#][
+		<input type="hidden" name="score_flag" value="#pkeyID#">]#
+		<input type="hidden" name="short_text" value="#v$short_text.RAW#">#v$short_text.RAW.BR#
+	</div>]
+	<!--- VIEW ONLY TEXT --->
+	[
+	<div class="medium-7 columns expand">#v$short_text.RAW.BR#</div>]# ]
+	<!--- END DISPLAY TEXT FLAG LOGIC --->
+
+	<!--- -------------- INPUT TEXT LOGIC -------------- --->
+	[#input_text_flag#][ #IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][ #v$short_text=NVL[#v$short_text#][#SQL_LOV#][#list_of_values#]#
+	<div class='medium-7 columns expand'>
+		<input type="hidden" name="score" value="#v$score#"> #IF[#v$score_flag.0#][
+		<input type="hidden" name="score_flag" value="#pkeyID#">]#
+		<input id="id-#item_num#" placeholder="#f_PlaceholderText#" type="text" class="input_text#req_class#" name="short_text" value="#v$short_text.RAW#" #EXISTS[#v$text_max_length#][maxlength="#v$text_max_length#" ]#>
+	</div>]
+	<!--- VIEW ONLY TEXT --->
+	[
+	<div class="medium-7 columns expand">#v$short_text.RAW.BR#</div>]# ]
+	<!--- END TEXT ENTRY LOGIC --->
+
+	<!--- -------------- TEXT ENTRY LOGIC -------------- --->
+	[#text_allowed_flag#][ #IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][ #v$short_text=NVL[#v$short_text#][#SQL_LOV#][#list_of_values#]#
+	<div class='medium-7 columns expand'>
+		<input type="hidden" name="score" value="#v$score#"> #IF[#v$score_flag.0#][
+		<input type="hidden" name="score_flag" value="#pkeyID#">]# #IF[#OR[#v$text_max_length.EXISTS#][#v$text_min_length.EXISTS#]#][
+		<textarea id="id-#item_num#" placeholder="#f_PlaceholderText#" rows=#NVL[#text_rows#][4]# cols=#NVL[#text_columns#][74]# class="long-text-input input_text#req_class#" name="short_text" onKeyDown="limitText(this, #v$text_max_length.0#, 'countdown_#item_num#');" onKeyUp="limitText(this, #v$text_max_length.0#, 'countdown_#item_num#');" onBlur="return minText(this, #v$text_min_length.0#, #item_num#);">#v$short_text.RAW#</textarea>
+		<div id="countdown_#item_num#"></div>
+		][
+		<textarea rows=#NVL[#text_rows#][4]# cols=#NVL[#text_columns#][74]# class=input_text#req_class# name="short_text">#v$short_text.RAW#</textarea>]#
+	</div>]
+	<!--- VIEW ONLY TEXT --->
+	[
+	<div class="medium-7 columns expand">#v$short_text.RAW.BR#</div>]# ]
+	<!--- END TEXT ENTRY LOGIC --->
+
+	<!--- -------------- DROP DOWN LOGIC -------------- --->
+	[#dropdown_flag#][ #IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+	<div class='medium-7 columns expand'>
+		<input type="hidden" name="score" value="#v$score#"> #IF[#v$score_flag.0#][
+		<input type="hidden" name="score_flag" value="#pkeyID#">]#
+		<select id="id-#item_num#" name="short_text" class="dropdown input_text#req_class# dropdown-response">
+			#EXISTS[#v$existing_profile_id#][
+			<option value=""></option>
+			]#
+			<!---
+#IF[#lookup_table_flag.0#][#dd_list_of_values=SECTION[DD_LOV][#list_of_values#]#]#
+#SELECTED[#dd_list_of_values#][#v$short_text.RAW#][#v$short_text.RAW#]#
+--->
+			<!--- Section checks lookup_table_flag = 1 - CALL BELOW FOR SECTIONS > 32K --->
+			<!---#SECTION[DD_LOV][#list_of_values#][#v$short_text.RAW#]#--->
+			#IF[#lookup_table_flag.0.NOT#] [
+			<optgroup label="Please Select One">#SELECTED[#dd_list_of_values#][#v$short_text.RAW#][#v$short_text.RAW#]#</optgroup>
+		</select>
+	</div>]# ]
+	<!--- VIEW ONLY TEXT --->
+	[<div class='medium-7 columns expand'>#v$short_text.RAW.BR#</div>]# ]
+	<!--- END DROP DOWN LOGIC --->
+
+	<!--- -------------- MULTI CHECKBOX LOGIC -------------- --->
+	[#multi_checkbox_flag#][ #IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+
+	<div class='small-11 medium-7 small-offset-1 medium-offset-0 columns vertical-list-container'>
+		<ul class="no-bullets vertical-list">
+			#list_of_values=NVL[#SQL_LOV#][#list_of_values#]#
+			<!--- Break up the list into multiple columns --->
+			#fields_per_col=DIV[#list_of_values.ROWS#][#text_columns.ABS.1#]# #fields_per_col=PARSE[#fields_per_col.CEIL#]# #cb_format=[]# #cb_field=[ #pkeyID=DECODE[#v$template_flag.0#][1][NEW$#transaction_id[]#][0][#v$profile_item_id#]#
+			<li class='response row align-middle'>
+				<input type="hidden" name="profile_item_id" value="#pkeyID#">
+				<input type="hidden" name="item_id" value="#v$item_id#">
+				<input type="hidden" name="sort_order" value="#v$sort_order#">
+				<input type="hidden" name="score" value="">
+				<input type="hidden" name="short_text" id=st_#pkeyID# value="">
+				<span class="styled-checkbox shrink columns">
+					<input type="checkbox" name="score_flag" id=cb_#pkeyID# #v$score_flag.CHECKED#a value="#cb_name.RAW#" onClick="setMulti('#pkeyID#',0);">
+				</span>
+				<label class="response-label" for="id-#item_num#" onClick="setMulti('#pkeyID#',1);"> #cb_name# </label>
+			</li>
+			]#
+			<!--- Add CR to end for searching --->			#list_of_values=PARSE[#list_of_values##PARSE[#CHR[10]#]#]# #found=INSTR[#list_of_values#][#PARSE[#CHR[10]#]#]#
+
+			<!--- Start of WHILE loop --->
+			#loop=[0]# #WHILE[#found.SIGN#] [#cb_name=SUBSTR[#list_of_values#][1][#SUB[#found#][1]#]# #list_of_values=SUBSTR[#list_of_values#][#ADD[#found#][1]#]# #EQUAL[#loop#][#fields_per_col#] [
+
+			#loop=[0]#]# #cb_field# #loop=+[1]# #found=INSTR[#list_of_values#][#PARSE[#CHR[10]#]#]# ][1000]#
+			<!--- End WHILE --->
+		</ul>
+	</div>
+	]
+	<!--- VIEW ONLY TEXT - only show value if it was checked (text exists) --->
+	[#EXISTS[#v$short_text#][
+	<div class='medium-7 columns expand'>
+		<div class="response row align-middle vertical-list">
+		#v$score_flag.CHECKBOX# <label class="response-label columns">#v$short_text#</label>
+		</div>
+	</div>]# ]# ]
+	<!--- END MULTI CHECKBOX LOGIC --->
+
+	<!--- -------------- CHECKBOX LOGIC -------------- --->
+	[#checkbox_flag#][ #IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+	<div class='small-11 medium-7 small-offset-1 medium-offset-0 columns switch-container'>
+		<input type="hidden" name="score" value="#v$score#">
+		<input type="hidden" name="short_text" value="#v$short_text.RAW#">
+		<div class="switch">
+			<input class="switch-input" id="id-#item_num#" type="checkbox" name="score_flag" #v$score_flag.CHECKED# value="#pkeyID#">
+			<label class="switch-paddle" for="id-#item_num#">
+				<span class="switch-active" aria-hidden="true">Yes</span>
+				<span class="switch-inactive" aria-hidden="true">No</span>
+			</label>
+		</div>
+	</div>]
+
+	<!--- VIEW ONLY TEXT --->
+	[
+	<div class="medium-7 columns expand">
+		<div class="response row align-middle vertical-list">#v$score_flag.CHECKBOX# #list_of_values.RAW#
+		</div>
+	</div>]# ]#
+	<!--- END CHECKBOX LOGIC --->
+
+	<!--- MULTI SELECTION LOGIC
+[#multi_selection_flag#][
+#IF[#OR[#v$admin_flag#][#v$existing_profile_id.NOTEXISTS#]#][
+<td colspan=#radio_colspan#><input type="hidden" name="score" value="#v$score#">
+#IF[#v$score_flag.0#][<input type="hidden" name="score_flag" value="#pkeyID#">]#
+<select name="short_text" class="input_text#req_class#" multiple="multiple" size=#multi_selection_rows#>
+#EXISTS[#v$existing_profile_id#][<option value=""></option>]#
+#IF[#lookup_table_flag.0#][#dd_list_of_values=SECTION[DD_LOV][#list_of_values#]#]#
+#SELECTED[#dd_list_of_values#][#v$short_text.RAW#][#v$short_text.RAW#]#
+</select></td>]
+<!--- VIEW ONLY TEXT --->
+	[
+	<div class="medium-7 columns expand">#v$short_text.RAW.BR#</div>]# ]
+	<!--- END MULTI SELECTION LOGIC --->
+	<!--- CALLED IN MASTER DETAIL SECTION TO ENABLE > 32K return     #SECTION[DD_LOV][#list_of_values#][#v$short_text.RAW#]#</TR> --->
+

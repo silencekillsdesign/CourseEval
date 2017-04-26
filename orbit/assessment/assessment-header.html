@@ -1,0 +1,30 @@
+<!--- #radio_width=[55]#
+#radio_colspan=[30]# --->
+
+<input type="hidden" name="P31" value="#v$profile_id#">
+
+#ln_parent_profile_flag=SQL[PRO$User.parent_profile_flag(#v$child_key_id.0#)]#
+
+<!--- define hidden fields - Only display for new profiles (existing already have them)
+- OR if we are in a multiple page break scenario --->
+#IF[#OR[#v$existing_profile_id.NOTEXISTS#][#pb$prev_sort_order.EXISTS#][#pb$next_sort_order.EXISTS#]#]
+[
+<input type="hidden" name="profile_id"    value="#NVL[#v$profile_id#][#v$NEW_profile_id#]#">
+<input type="hidden" name="parent_profile_id" value="#search_profile_id#">
+<input type="hidden" name="profile_type" value="#NVL[#COURSE_ID#][#v$profile_type#]#">
+<input type="hidden" name="child_key_id" value="#NVL[#v$child_key_id#][#STUDENT_ID#]#">
+<input type="hidden" name="child_key"    value="#NVL[#v$child_key#][#course_term#]#">
+<input type="hidden" name="parent_key_id" value="#NVL[#v$parent_key_id#][#PROFESSOR_ID#]#">
+<input type="hidden" name="parent_key"    value="#v$parent_key#">
+]#
+
+#IF[#AND[#pb$start_sort_order.EXISTS#][#v$existing_profile_id.EXISTS#]#]
+[#v$existing_profile_id=[]#]#
+
+#f_PlaceholderText=NVL[#SECTION[GET_PARAMETER_VALUE][PRO_STUDENT_PLACEHOLDER_TEXT]#][Enter text here...]#
+
+<!--- Check to see if the alternate professor added question layout has been enabled.
+			If so, set tokens in body to control the alternate layout.
+--->
+#f_STUDENT_PROFESSOR_SMALL_RESPONSIVE_LAYOUT=
+NVL[#SECTION[GET_PARAMETER_VALUE][PRO_STUDENT_PROFESSOR_SMALL_RESPONSIVE_LAYOUT]#][0]#

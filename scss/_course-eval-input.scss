@@ -1,0 +1,173 @@
+@@ -44,12 +44,6 @@ $likert-colors: (
+	purple: #c900f8
+);
+
+//$faces: (
+//	smile: $fa-var-smile-o,
+//	frown: $fa-var-frown-o,
+//	meh: 	 $fa-var-meh-o
+//);
+
+$brand-primary: dodgerblue;
+$brand-secondary: blueviolet;
+$brand-copy: #495058;
+@@ -109,8 +103,6 @@ input, textarea {
+	padding: .5em;
+}
+
+// MOVED TEXT HEADER TO form-header
+
+.parent-group-desc {
+	text-align: center;
+	margin: 1em 0;
+@@ -122,8 +114,10 @@ input, textarea {
+
+.response {
+//	box-sizing: border-box;
+//	flex: 1;
+	min-width: 4em;
+	max-width: 6em;
+	width: 4em;
+	max-width: 4em;
+	padding: 0 .25em;
+	margin: .125em;
+	font-size: 1rem;
+@@ -131,18 +125,18 @@ input, textarea {
+	& label {
+		line-height: 1.25;
+	}
+	&:last-of-type {
+//	&:last-of-type {
+		@include breakpoint(medium) {
+			margin-right: .375rem;
+//			align-self: flex-end;
+//			align-content: flex-end;
+//			align-items: flex-end;
+			margin-right: .75rem;
+////			align-self: flex-end;
+////			align-content: flex-end;
+////			align-items: flex-end;
+		}
+		// need to check this out for vertical radio label
+//    &.vertical-label {
+//      margin: 0;
+//    }
+	}
+//	}
+}
+
+// moved colored likerts to form-header
+@@ -161,31 +155,6 @@ input, textarea {
+	}
+}
+
+
+//.question-row  {
+//  padding: .5em 0;
+// &:nth-of-type(2n+3) {
+//    background: #f5f5f5;
+//   +.text-header {
+//     &:nth-of-type(2n+2) {
+//       background: white;
+//       }
+//     }
+//   }
+//  }
+
+//.row +.text-header:nth-child(odd) {
+//  background: $brand-primary;
+//  + .question-row:nth-of-type(even) {
+//    background: lighten(red, 20);
+//    ~.question-row:nth-of-type(odd) {
+//      background: lighten(blue, 20);
+//    }
+//  }
+//}
+
+
+
+.required:after {
+		display: inline;
+		position: relative;
+@@ -198,22 +167,17 @@ input, textarea {
+}
+
+.question-number {
+//  padding-right: 0;
+	width: 2.5em !important;
+}
+.question-description {
+	padding-left: 0;
+	margin-left: 0;
+}
+
+.response-label {
+	font-size: 75%;
+	display: block;
+//  line-height: 1.375;
+	line-height: 1.125;
+}
+
+.long-text-input {
+	min-height: 7em;
+	min-height: 8em;
+	margin-bottom: 0;
+}
+
+@@ -221,43 +185,6 @@ option[selected] .select-paceholder {
+	color: #cacaca !important;
+}
+
+//.styled-radio input {
+//	position: relative;
+//	width: 1.5em;
+//	height: 1.5em;
+////  display: none;
+//	top: 0;
+//	right: 0;
+//	bottom: 0;
+//	left: 0;
+//	&:before {
+//		opacity: 1;
+//		content: '';
+//		position: absolute;
+//		font-family: FontAwesome;
+//		top: 0;
+//		right: 0;
+//		bottom: 0;
+//		left: 0;
+//		margin: auto;
+//		border: 2px solid $brand-primary;
+//		background: white;
+//		border-radius: 50%;
+//		@include breakpoint(medium)
+//	}
+//	&:checked:before {
+//			background: $brand-primary;
+//		font-family: font-awesome;
+//			text-indent: .125em;
+//			content: "\f00c";
+//			color: white;
+//			line-height: 1.25;
+//		}
+//}
+
+//moved styled radio input to multicheck
+
+// moved vertical list to multicheck
+
+.sd-submit-button {
+	margin-top: 1em !important;
+@@ -268,11 +195,7 @@ option[selected] .select-paceholder {
+	margin-bottom: 2em;
+}
+
+//for debugging only
+.question-group-section {
+	border: 1px solid coral;
+}
+
+//move to footer scss
+.footer {
+	margin-top: 2em;
+	text-align: center;
