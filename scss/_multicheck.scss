@@ -33,7 +33,7 @@
 			border: 2px solid $brand-primary;
 			background: white;
 			border-radius: 3px;
-			font-size: 11em;
+//			font-size: 1em;
 		}
 		&:checked:before {
 				background: $brand-primary;
@@ -47,5 +47,5 @@
 
 .styled-radio input:before {
 	border-radius: 50%;
-	top: -50%;
+
 }
